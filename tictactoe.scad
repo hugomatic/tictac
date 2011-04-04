@@ -1,4 +1,41 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// tic-tac-toe board by Hugomatic and Basbrun
+// 
+// http://basbrun.com
+// http://hugomatic.ca
+//
+// contact: hugo@hugomatic.ca
+//
+// License: 
+// Copying is not stealing, but cheating at tic-tac-toe is meh.
+// http://en.wikipedia.org/wiki/Tic-tac-toe
 
+// hide / show the board
+//draw_board = false;
+draw_board = true;
+
+// hide / show the x and os
+//draw_x_and_os = false;
+draw_x_and_os = true;
+
+// === BOARD  parameters ===
+DimX=75;  // external board dimensions in mm
+DimY=75;
+DimZ=6;
+
+// recess for the pockets
+BigH=2;      // from top to thin walls
+SmallH=2;  // from thin walls to bottom
+BigW=68;   // internal size of play area
+BorderW=4;  // thin wall thickness
+
+// === X and O parameters ===
+Width= 18;	
+Thick=3;
+Height=2;
+Spacing=24;
+
+// this module draws the board
 module tictactoeBase(DimX, DimY,DimZ, BigH, SmallH,BigW, BorderW )
 {
 	PocketWidth = (BigW-(2*BorderW) ) / 3;
@@ -24,6 +61,7 @@ module tictactoeBase(DimX, DimY,DimZ, BigH, SmallH,BigW, BorderW )
 	}
 }
 
+// this module generates a single O
 module o_piece(Width, Thick, Height)
 {
 	difference()
@@ -33,6 +71,7 @@ module o_piece(Width, Thick, Height)
 	}
 }
 
+// this module generates a single X
 module x_piece(Width, Thick, Height)
 {
 
@@ -62,9 +101,36 @@ module x_piece(Width, Thick, Height)
 
 }
 
-tictactoeBase(DimX=75, DimY=75, DimZ=6, BigH=2, SmallH=2, BigW=68, BorderW=4);
+// this modules draws multiple X and Os
+module x_and_os(Width, Thick, Height, Spacing)
+{
+	for (i=[-Spacing, 0, Spacing])
+	{
+		// top line, all X
+		translate([i,Spacing,0])
+			x_piece(Width, Thick, Height);
+		
+		// bottom line, all Os
+		translate([i,-Spacing,0])
+			o_piece(Width, Thick, Height);
+	}
 
-o_piece(Width=18, Thick=3, Height=2);
+	x_piece(Width, Thick, Height);
 
-translate([24,0,0])
-x_piece(Width=18, Thick=3, Height=2);
+	translate([-Spacing,0,0])
+		x_piece(Width, Thick, Height);
+
+	translate([Spacing,0,0])
+		o_piece(Width, Thick, Height);
+	
+}
+
+if (draw_board)
+{
+	tictactoeBase(DimX, DimY, DimZ, BigH, SmallH, BigW, BorderW);
+}
+
+if(draw_x_and_os)
+{
+	x_and_os(Width, Thick, Height, Spacing);
+}
